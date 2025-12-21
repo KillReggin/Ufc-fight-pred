@@ -1,0 +1,62 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "10004:6379"
+  postgres:
+    image: postgres:16
+    container_name: ufc_postgres
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: ufc
+    ports:
+      - "10001:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/data/raw:/data
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "10003:27017"
+    volumes:
+      - mongo_data:/data/db
+  mongo-express:
+    image: mongo-express:1.0
+    restart: unless-stopped
+    ports:
+      - "10005:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+      ME_CONFIG_MONGODB_SERVER: mongo
+    depends_on:
+      - mongo
+  rabbitmq: 
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"   
+      - "15672:15672" 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: ufc_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ufc.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "10002:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  mongo_data:

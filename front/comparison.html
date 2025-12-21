@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сравнение бойцов | UFC Predictor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <header class="comparison-header">
+        <h1>СРАВНЕНИЕ БОЙЦОВ</h1>
+        <a href="/index.html" class="back-btn">← Назад</a>
+    </header>
+
+    <main class="comparison-page">
+
+        <section class="prediction-section">
+
+            <div class="fighter-card">
+                <h2 class="red-name"></h2>
+                <span class="red-nickname nickname"></span>
+                <div class="fighter-stats">
+                    <p><strong class="red-record"></strong> Рекорд</p>
+                    <p><strong class="red-height"></strong> Рост</p>
+                    <p><strong class="red-reach"></strong> Размах рук</p>
+                    <p><strong class="red-stance"></strong> Стойка</p>
+                    <p><strong class="red-weight"></strong> Вес</p>
+                </div>
+            </div>
+
+            <div class="vs-circle">
+                <div class="win-probability">
+                    <div class="prob-left"></div>
+                    <div class="vs-text">VS</div>
+                    <div class="prob-right"></div>
+                </div>
+            </div>
+
+            <div class="fighter-card">
+                <h2 class="blue-name"></h2>
+                <span class="blue-nickname nickname"></span>
+                <div class="fighter-stats">
+                    <p><strong class="blue-record"></strong> Рекорд</p>
+                    <p><strong class="blue-height"></strong> Рост</p>
+                    <p><strong class="blue-reach"></strong> Размах рук</p>
+                    <p><strong class="blue-stance"></strong> Стойка</p>
+                    <p><strong class="blue-weight"></strong> Вес</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="shap-analysis">
+            <h2>ОБОСНОВАНИЕ ПРОГНОЗА</h2>
+            <div class="shap-grid"></div>
+            <section class="shap-chart">
+            <h2>КЛЮЧЕВЫЕ ФАКТОРЫ РЕШЕНИЯ</h2>
+            <div class="shap-bars"></div>
+            <section class="decision-summary">
+            <h2>ПОЧЕМУ МОДЕЛЬ ВЫБРАЛА ПОБЕДИТЕЛЯ</h2>
+            <ul class="decision-list"></ul>
+</section>
+</section>
+        </section>
+
+        <section class="fight-history">
+            <h2>ИСТОРИЯ БОЁВ</h2>
+
+            <div class="history-tables">
+
+                <div class="fighter-history red">
+                    <h3 class="red-name"></h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Результат</th>
+                            <th>Соперник</th>
+                            <th>Метод</th>
+                            <th>Раунд</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="fighter-history blue">
+                    <h3 class="blue-name"></h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Результат</th>
+                            <th>Соперник</th>
+                            <th>Метод</th>
+                            <th>Раунд</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
