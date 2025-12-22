@@ -18,14 +18,12 @@ def load_profiles(path):
 def find_fighter(df, name: str):
     name = name.lower().strip()
 
-    # прямое совпадение
     if name in df.index:
         fighter = df.loc[name]
         if isinstance(fighter, pd.DataFrame):
-            return fighter.iloc[0]  # берём первую строку
+            return fighter.iloc[0]  
         return fighter
 
-    # частичное совпадение
     matches = [idx for idx in df.index if name in idx]
     if len(matches) == 1:
         fighter = df.loc[matches[0]]
