@@ -8,18 +8,15 @@ import hashlib
 
 from rabbitmq import send_predict_task
 
-# ================= PATHS =================
 BASE_DIR = Path(__file__).resolve().parent
 FRONT_DIR = BASE_DIR.parent / "front"
 FIGHTS_CSV = BASE_DIR / "data" / "raw" / "fights.csv"
 
-# ================= LOAD DATA =================
 fights_df = pd.read_csv(FIGHTS_CSV)
 
 fights_df["Fighter_1"] = fights_df["Fighter_1"].str.lower().str.strip()
 fights_df["Fighter_2"] = fights_df["Fighter_2"].str.lower().str.strip()
 
-# ================= REDIS =================
 redis_client = redis.Redis(
     host="localhost",
     port=10004,
@@ -27,7 +24,7 @@ redis_client = redis.Redis(
     decode_responses=True
 )
 
-CACHE_TTL = 60 * 10  # 10 минут
+CACHE_TTL = 60 * 10  
 
 
 def make_cache_key(f1: str, f2: str) -> str:
@@ -35,7 +32,6 @@ def make_cache_key(f1: str, f2: str) -> str:
     return "predict:" + hashlib.md5(key.encode()).hexdigest()
 
 
-# ================= UTILS =================
 def normalize_method(method: str) -> str:
     m = method.lower()
     if "ko" in m or "tko" in m:
@@ -48,11 +44,6 @@ def normalize_method(method: str) -> str:
 
 
 def determine_winner(row):
-    """
-    ❗ НЕ доверяем Result_1 / Result_2
-    Используем статистическое приближение
-    """
-
     score_1 = (
         row["KD_1"] * 10 +
         row["STR_1"] +
@@ -74,15 +65,13 @@ def determine_winner(row):
     else:
         return row["Fighter_2"], row["Fighter_1"]
 
-
-# ================= APP =================
 app = Flask(__name__, static_folder=str(FRONT_DIR))
 CORS(app)
 
 print("FRONT_DIR:", FRONT_DIR)
 print("Files:", list(FRONT_DIR.iterdir()))
 
-# ================= FRONT =================
+
 @app.route("/")
 def index():
     return send_from_directory(FRONT_DIR, "index.html")
@@ -98,7 +87,6 @@ def static_files(path):
     return send_from_directory(FRONT_DIR, path)
 
 
-# ================= API =================
 @app.route("/api/predict", methods=["POST"])
 def predict():
     data = request.json
@@ -108,17 +96,15 @@ def predict():
     cache_key = make_cache_key(f1, f2)
     lock_key = cache_key + ":lock"
 
-    # 1️⃣ Redis HIT
     cached = redis_client.get(cache_key)
     if cached:
         print("⚡ REDIS HIT")
         return jsonify(json.loads(cached)), 200
 
-    # 2️⃣ Пытаемся поставить LOCK
     lock_acquired = redis_client.set(
         lock_key,
         "1",
-        ex=30,   # максимум сколько модель может считаться
+        ex=30,  
         nx=True
     )
 
@@ -131,7 +117,6 @@ def predict():
     else:
         print("⏳ LOCK EXISTS → waiting")
 
-    # 3️⃣ Говорим фронту "жди"
     return jsonify({"status": "processing"}), 202
 
 @app.route("/api/fighter-history/<name>")
@@ -165,7 +150,5 @@ def fighter_history(name):
 
     return jsonify(history)
 
-
-# ================= RUN =================
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
