@@ -18,7 +18,7 @@ def send_predict_task(payload: dict):
         routing_key=QUEUE_NAME,
         body=json.dumps(payload),
         properties=pika.BasicProperties(
-            delivery_mode=2  # persistent
+            delivery_mode=2  
         )
     )
 
