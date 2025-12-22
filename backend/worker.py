@@ -8,7 +8,6 @@ from predict import predict_fight
 from mongo import save_prediction
 
 
-# ================== REDIS ==================
 redis_client = redis.Redis(
     host="localhost",
     port=10004,
@@ -16,7 +15,7 @@ redis_client = redis.Redis(
     decode_responses=True
 )
 
-CACHE_TTL = 600  # 10 минут
+CACHE_TTL = 600  
 
 
 def make_cache_key(f1: str, f2: str) -> str:
@@ -24,7 +23,6 @@ def make_cache_key(f1: str, f2: str) -> str:
     return "predict:" + hashlib.md5(key.encode()).hexdigest()
 
 
-# ================== CALLBACK ==================
 def callback(ch, method, properties, body):
     data = json.loads(body)
     f1 = data["fighter1"]
@@ -32,7 +30,6 @@ def callback(ch, method, properties, body):
 
     cache_key = make_cache_key(f1, f2)
 
-    # 🔁 защита от повторной обработки
     if redis_client.exists(cache_key):
         print("🔁 CACHE EXISTS → SKIP")
         ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -43,14 +40,12 @@ def callback(ch, method, properties, body):
     try:
         result = predict_fight(f1, f2)
 
-        # 💾 Redis cache
         redis_client.setex(
             cache_key,
             CACHE_TTL,
             json.dumps(result)
         )
 
-        # 🍃 MongoDB (история)
         save_prediction(result)
 
         print("🧠 RESULT SAVED")
@@ -61,8 +56,6 @@ def callback(ch, method, properties, body):
         print("❌ ERROR:", e)
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
-
-# ================== RABBIT ==================
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host="localhost")
 )
