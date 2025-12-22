@@ -34,8 +34,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-/* ================= POLLING ================= */
-
 async function fetchPredictionWithPolling(f1, f2) {
     const maxAttempts = 10;
     const delayMs = 700;
@@ -62,8 +60,6 @@ async function fetchPredictionWithPolling(f1, f2) {
 
     throw new Error("Model timeout");
 }
-
-/* ================= UI ================= */
 
 function renderProbability(data) {
     document.querySelector(".prob-left").innerText =
@@ -98,8 +94,6 @@ function renderFighter(side, data) {
     document.querySelector(`.${side}-stance`).innerText = safe(data.stance);
     document.querySelector(`.${side}-weight`).innerText = safe(data.weight);
 }
-
-/* ================= SHAP ================= */
 
 function renderShapGrid(shap) {
     const grid = document.querySelector(".shap-grid");
@@ -154,8 +148,6 @@ function renderShapBars(shap) {
     });
 }
 
-/* ================= HISTORY ================= */
-
 async function loadHistory(name, selector) {
     const res = await fetch(
         `/api/fighter-history/${encodeURIComponent(name)}`
@@ -178,9 +170,6 @@ async function loadHistory(name, selector) {
         tbody.appendChild(tr);
     });
 }
-
-/* ================= index.html ================= */
-
 function compareFighters() {
     const f1 = document.getElementById("fighter1").value.trim();
     const f2 = document.getElementById("fighter2").value.trim();
